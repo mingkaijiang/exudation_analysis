@@ -12,43 +12,39 @@ rm(list=ls(all=TRUE))
 source("prepare.R")
 
 
-############## check input files
-myDF <- read.csv("data/P_by_CO2_data_cleaned_no_eq_V5_low_vs_high_P.csv",strip.white=T)
+################################# Get input ################################# 
+#### There are many different types of experiments:
+#### 1. Exudation:          Studies with real root exudation explicitily estimated, 
+####                        and the associated causal-response relationships.
+####                        These studies must be performed in well-controlled environment. 
+#### 2. Substrate Addition: A proxy substrate is used to simulate the effect of root exudation,
+####                        with the associated plant/ecossytem causal-response relationships.
+#### 3. Exclusion/Girdling: Implicitly estimate the effect of root exudation by excluding plants/root C release.
+####                        Huge assumption must be made, hence potentially not useful.
+#### 4. Stable isotope:     Studies with the ability to trace the movement of added element,
+####                        potentially useful to estimate the turnover time and fraction absorption.
+#### 5. Perturbation:       Studies that perturb the environment/plant (e.g. drought).
+####                        We can still extract useful information under ambient treatment. 
 
-myDF <- as.data.frame(myDF)
+
+############## read input files and assign column names
+myDF1 <- read.csv("Data/D1_SubstrateAddition_V1.01_scratch.csv",
+                  strip.white=T, skip=3, header=F)
+my.header1 <- read.csv("Data/D1_SubstrateAddition_V1.01_scratch.csv",
+                       strip.white=T, nrow=1, skip=1, header=F)
+colnames(myDF1) <- my.header1
+
+### Calculate all the effect size (abs diff and ratio)
+myDF1 <- calculate_effect_size(inDF=myDF1)
 
 
-### recalculate all the mean effect size
-myDF <- make_mean_effect_size_recalculation(inDF=myDF)
+### only look at priming effect
+response.variables <- unique(myDF1$Response_variable)
 
-### remove P treatment of zero low P addition
-#myDF <- subset(myDF, Trt_aP > 0.0)
+subDF1 <- myDF1[myDF1$Response_variable%in%c("_Priming effect", "Priming SOC mineralisation", "Priming effect",
+                                             "Priming"),]
 
-### make consistent standard error confidence intervals
-myDF <- make_consistent_confidence_interval(inDF=myDF, return.option="all_se")
-
-### check ratio of CO2 treatment
-myDF$Trt_eC_by_aC <- myDF$Trt_eCO2/myDF$Trt_aCO2
-
-### check P treatment
-myDF$Trt_eP_by_aP <- myDF$Trt_eP / myDF$Trt_aP
-
-### check P reduction ratio
-#myDF$Trt_P_reduction <- (myDF$Trt_eP - myDF$Trt_aP) / myDF$Trt_eP
-
-############## Exclude some extremely high P addition experiment
-subDF100 <- subset(myDF, Trt_aCO2 < 410)
-
-#### generate species list
-generate_species_list()
-
-############## Basic statistics that summarize 
-### number of studies
-### number of data entries
-### vegetation type
-### CO2 and P treatment
-### etc.
-make_basic_summary_stats_plots()
+with(subDF1, plot(Effect_size_mean_subtraction~Substrate_application_rate))
 
 
 ############## Statistical analysis - metafor
