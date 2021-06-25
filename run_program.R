@@ -34,6 +34,24 @@ my.header1 <- read.csv("Data/D1_SubstrateAddition_V1.01_scratch.csv",
                        strip.white=T, nrow=1, skip=1, header=F)
 colnames(myDF1) <- my.header1
 
+
+
+### Convert unit whenever possible, 
+### whilst maintaining the same dataset structure and variable
+myDF1 <- convert_response_variable_unit(inDF=myDF1)
+
+
+#### to do list:
+### 1. add additional soil property information, e.g bulk density, disturbed, plant age, nutrient addition
+### 2. consistent unit
+### 3. convert response variables where possible
+### 4. Link between microbial biomass response, enzyme activities, and C release/mineralization
+### 5. preliminary analysis
+### 6. code from ogle
+### 7. add other dataset, esp. nutrient manipulation
+### 8. write notes about experiment
+
+
 ### Calculate all the effect size (abs diff and ratio)
 myDF1 <- calculate_effect_size(inDF=myDF1)
 
