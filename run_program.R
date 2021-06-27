@@ -28,11 +28,13 @@ source("prepare.R")
 
 
 ############## read input files and assign column names
-myDF1 <- read.csv("Data/D1_SubstrateAddition_V1.01_scratch.csv",
+myDF1 <- read.csv("Data/D1_SubstrateAddition_V1.02.csv",
                   strip.white=T, skip=3, header=F)
-my.header1 <- read.csv("Data/D1_SubstrateAddition_V1.01_scratch.csv",
+my.header1 <- read.csv("Data/D1_SubstrateAddition_V1.02.csv",
                        strip.white=T, nrow=1, skip=1, header=F)
 colnames(myDF1) <- my.header1
+
+dim(myDF1)
 
 
 
