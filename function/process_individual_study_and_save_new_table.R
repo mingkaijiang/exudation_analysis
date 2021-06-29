@@ -297,7 +297,25 @@ process_individual_study_and_save_new_table <- function(){
         theme_bw(); p3
     
     
+    subDF1.mic <- subDF1[!is.na(subDF1$Microbial_biomass_mean_control),]
+    subDF1.mic <- subDF1[subDF1$Microbial_biomass_mean_control!="6.43 ug DNA g-1",]
+    subDF1.mic$Microbial_biomass_mean_control <- as.numeric(subDF1.mic$Microbial_biomass_mean_control)
     
+    subDF1.mic <- subDF1[!is.na(subDF1$Microbial_biomass_response_ratio),]
+    subDF1.mic$Microbial_biomass_response_ratio <- as.numeric(subDF1.mic$Microbial_biomass_response_ratio)
+    
+    p2 <- ggplot() +
+        geom_point(subDF1.mic, mapping=aes(x=Microbial_biomass_response_ratio, 
+                                       y=Effect_size_mean_subtraction,
+                                       pch=Land_use, 
+                                       size=Total_substrate_added_per_unit_soil,
+                                       fill=Citation,
+                                       col=Citation))+
+        geom_smooth()+
+        #scale_y_continuous(trans='log2',limits=c(0.05, 50))+
+        ylab("Effect size (mg C g-1 soil)")+
+        xlab("Microbial biomass C in control (mg C g-1 soil)")+
+        theme_bw(); p2
     
     
     
@@ -336,7 +354,9 @@ process_individual_study_and_save_new_table <- function(){
         theme_bw(); p2
     
     
+    
     subDF1$Effect_size_mean_per_substrate <- with(subDF1, Effect_size_mean_subtraction/Total_substrate_added_per_unit_soil)
+    subDF2$Effect_size_mean_per_substrate <- with(subDF2, Effect_size_mean_subtraction/Total_substrate_added_per_unit_soil)
     
     summary(subDF1$Effect_size_mean_per_substrate)
     
@@ -356,6 +376,43 @@ process_individual_study_and_save_new_table <- function(){
         #                            "Forest" = 22,
         #                            "Grassland" = 23))+
         theme_bw(); p3
+    
+    
+    p4 <- ggplot() +
+        geom_point(subDF2, mapping=aes(x=Time_since_substrate_addition, 
+                                       y=Effect_size_mean_per_substrate,
+                                       pch=Land_use, 
+                                       #size=Total_substrate_added_per_unit_soil,
+                                       fill=Citation,
+                                       col=Citation))+
+        geom_smooth()+
+        #scale_y_continuous(trans='log2',limits=c(0.05, 50))+
+        ylab("Effect size per substrate (unitless)")+
+        xlab("Experimental duration (d)")+
+        #scale_shape_manual(name="Land use",
+        #                   values=c("Cropland" = 21,
+        #                            "Forest" = 22,
+        #                            "Grassland" = 23))+
+        theme_bw(); p4
+    
+    
+    p4 <- ggplot() +
+        geom_point(subDF2, mapping=aes(x=Time_since_substrate_addition, 
+                                       y=Effect_size_mean_per_substrate,
+                                       pch=Land_use, 
+                                       #size=Total_substrate_added_per_unit_soil,
+                                       fill=Citation,
+                                       col=Citation))+
+        geom_smooth()+
+        #scale_y_continuous(trans='log2',limits=c(0.05, 50))+
+        ylab("Effect size per substrate (unitless)")+
+        xlab("Experimental duration (d)")+
+        ylim(c(0,1))+
+        #scale_shape_manual(name="Land use",
+        #                   values=c("Cropland" = 21,
+        #                            "Forest" = 22,
+        #                            "Grassland" = 23))+
+        theme_bw(); p4
     
     
     
